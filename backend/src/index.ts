@@ -99,7 +99,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, role } = req.body;
     
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ 
@@ -117,14 +117,14 @@ app.post('/api/auth/register', async (req, res) => {
       });
     }
 
-    // Create new user
+    // Create new user with specified role
     const newUser = {
       id: 'user-' + Date.now(),
       email,
       password, // Store password as plain text (not secure, just for demo)
       firstName,
       lastName,
-      role: 'USER',
+      role: role || 'USER', // Default to USER if no role specified
       createdAt: new Date().toISOString()
     };
 
