@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  VETERINARIAN
+}
+
+enum AnimalType {
+  DOG
+  CAT
+  BIRD
+  FISH
+  RABBIT
+  HAMSTER
+  OTHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum MealPlanStatus {
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum MedicalRecordType {
+  VACCINATION
+  CHECKUP
+  TREATMENT
+  SURGERY
+  EMERGENCY
+  OTHER
+}
+
+model User {
+  id        String   @id @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  animalProfiles AnimalProfile[]
+  medicalRecords MedicalRecord[]
+  mealPlans      MealPlan[]
+  progressEntries ProgressEntry[]
+
+  @@map("users")
+}
+
+model AnimalProfile {
+  id          String     @id @map("_id") @db.ObjectId
+  name        String
+  species     AnimalType
+  breed       String?
+  age         Int?
+  weight      Float?
+  gender      Gender?
+  color       String?
+  description String?
+  imageUrl    String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  userId          String @db.ObjectId
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicalRecords  MedicalRecord[]
+  mealPlans       MealPlan[]
+  progressEntries ProgressEntry[]
+
+  @@map("animal_profiles")
+}
+
+model MedicalRecord {
+  id          String            @id @map("_id") @db.ObjectId
+  title       String
+  description String?
+  type        MedicalRecordType
+  date        DateTime
+  veterinarian String?
+  notes       String?
+  attachments String[] // Array of file URLs
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // Relations
+  userId        String @db.ObjectId
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  animalId      String @db.ObjectId
+  animal        AnimalProfile   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@map("medical_records")
+}
+
+model MealPlan {
+  id          String          @id @map("_id") @db.ObjectId
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      MealPlanStatus  @default(ACTIVE)
+  aiGenerated Boolean         @default(false)
+  rationale   String?         // AI-generated explanation
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  userId        String @db.ObjectId
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  animalId      String @db.ObjectId
+  animal        AnimalProfile   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  mealItems     MealItem[]
+
+  @@map("meal_plans")
+}
+
+model MealItem {
+  id          String   @id @map("_id") @db.ObjectId
+  name        String
+  description String?
+  quantity    String   // e.g., "1 cup", "200g", "2 pieces"
+  frequency   String   // e.g., "daily", "twice daily", "weekly"
+  timeOfDay   String?  // e.g., "morning", "evening", "anytime"
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  mealPlanId String @db.ObjectId
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+
+  @@map("meal_items")
+}
+
+model ProgressEntry {
+  id          String   @id @map("_id") @db.ObjectId
+  weight      Float?
+  height      Float?
+  notes       String?
+  photos      String[] // Array of photo URLs
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId    String @db.ObjectId
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  animalId  String @db.ObjectId
+  animal    AnimalProfile @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@map("progress_entries")
+}
+
+model SystemLog {
+  id        String   @id @map("_id") @db.ObjectId
+  level     String   // INFO, WARN, ERROR, DEBUG
+  message   String
+  metadata  Json?    // Additional structured data
+  timestamp DateTime @default(now())
+
+  @@map("system_logs")
+}

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: petnutricare-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: petnutricare-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - petnutricare-network
+
+volumes:
+  redis_data:
+
+networks:
+  petnutricare-network:
+    driver: bridge
