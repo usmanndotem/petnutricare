@@ -8,10 +8,12 @@ import { Dashboard } from "./components/Dashboard";
 import { CreateProfile } from "./components/CreateProfile";
 import { ViewProfiles } from "./components/ViewProfiles";
 import { MealPlan } from "./components/MealPlan";
+import { MedicalRecords } from "./components/MedicalRecords";
+import { AIAnalysis } from "./components/AIAnalysis";
 import { ApiService } from "./services/api";
 import "./styles/globals.css";
 
-type Page = "home" | "login" | "dashboard" | "create-profile" | "profiles" | "meal-plans";
+type Page = "home" | "login" | "dashboard" | "create-profile" | "profiles" | "meal-plans" | "medical-records" | "ai-analysis";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
@@ -104,6 +106,10 @@ export default function App() {
         return <ViewProfiles user={user} />;
       case "meal-plans":
         return <MealPlan user={user} />;
+      case "medical-records":
+        return <MedicalRecords user={user} />;
+      case "ai-analysis":
+        return <AIAnalysis user={user} />;
       default:
         return <LandingPage />;
     }
@@ -120,9 +126,9 @@ export default function App() {
     );
   }
 
-  const showHeaderFooter = !["dashboard", "create-profile", "profiles", "meal-plans"].includes(currentPage);
-  const showDashboardHeader = ["dashboard", "create-profile", "profiles", "meal-plans"].includes(currentPage);
-  const showBreadcrumb = ["dashboard", "create-profile", "profiles", "meal-plans"].includes(currentPage);
+  const showHeaderFooter = !["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis"].includes(currentPage);
+  const showDashboardHeader = ["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis"].includes(currentPage);
+  const showBreadcrumb = ["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis"].includes(currentPage);
 
   return (
     <div className="min-h-screen flex flex-col">

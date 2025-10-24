@@ -5,6 +5,8 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Badge } from "./ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { VeterinarySidebar } from "./VeterinarySidebar";
+import { PetOwnerSidebar } from "./PetOwnerSidebar";
 
 const mockAnimals = [
   {
@@ -87,7 +89,11 @@ const mockAnimals = [
   },
 ];
 
-export function ViewProfiles() {
+interface ViewProfilesProps {
+  user?: any;
+}
+
+export function ViewProfiles({ user }: ViewProfilesProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterSpecies, setFilterSpecies] = useState("all");
 
@@ -101,38 +107,11 @@ export function ViewProfiles() {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-border pt-20 z-10">
-        <nav className="p-4 space-y-2">
-          <a
-            href="/dashboard"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            Dashboard
-          </a>
-          <a
-            href="/profiles"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-[#7ED9B9]/10 to-[#5EC7E8]/10 text-[#2A4B7C] transition-colors"
-          >
-            <PawPrint className="w-5 h-5" />
-            Animal Profiles
-          </a>
-          <a
-            href="/meal-plans"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <UtensilsCrossed className="w-5 h-5" />
-            Meal Plans
-          </a>
-          <a
-            href="/progress"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <TrendingUp className="w-5 h-5" />
-            Progress
-          </a>
-        </nav>
-      </aside>
+      {user?.role === 'VETERINARIAN' ? (
+        <VeterinarySidebar currentPage="profiles" />
+      ) : (
+        <PetOwnerSidebar currentPage="profiles" />
+      )}
 
       {/* Main Content */}
       <main className="ml-64 pt-20 p-8">

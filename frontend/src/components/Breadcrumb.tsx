@@ -37,6 +37,18 @@ export function Breadcrumb({ currentPage, user }: BreadcrumbProps) {
           { label: "Meal Plans", href: "/meal-plans" }
         );
         break;
+      case "medical-records":
+        breadcrumbs.push(
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Medical Records", href: "/medical-records" }
+        );
+        break;
+      case "ai-analysis":
+        breadcrumbs.push(
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "AI Analysis", href: "/ai-analysis" }
+        );
+        break;
     }
 
     return breadcrumbs;

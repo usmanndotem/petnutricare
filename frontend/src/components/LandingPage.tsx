@@ -2,9 +2,21 @@ import { Brain, Stethoscope, Leaf, ArrowRight, Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { ApiTest } from "./ApiTest";
 
 export function LandingPage() {
+  const handleSmoothScroll = (targetId: string) => {
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const handleLoginNavigation = () => {
+    window.location.hash = "login";
+  };
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -26,17 +38,15 @@ export function LandingPage() {
                 <Button 
                   size="lg" 
                   className="bg-gradient-to-r from-[#7ED9B9] to-[#5EC7E8] hover:opacity-90"
-                  asChild
+                  onClick={handleLoginNavigation}
                 >
-                  <a href="/login">
-                    Get Started <ArrowRight className="w-5 h-5 ml-2" />
-                  </a>
+                  Get Started <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <a href="/login">Login</a>
+                <Button size="lg" variant="outline" onClick={handleLoginNavigation}>
+                  Login
                 </Button>
-                <Button size="lg" variant="ghost" asChild>
-                  <a href="#features">Learn More</a>
+                <Button size="lg" variant="ghost" onClick={() => handleSmoothScroll('features')}>
+                  Learn More
                 </Button>
               </div>
             </div>
@@ -170,11 +180,9 @@ export function LandingPage() {
           <Button 
             size="lg" 
             className="bg-white text-[#2A4B7C] hover:bg-white/90"
-            asChild
+            onClick={handleLoginNavigation}
           >
-            <a href="/login">
-              Start Free Trial <ArrowRight className="w-5 h-5 ml-2" />
-            </a>
+            Start Free Trial <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
       </section>
@@ -192,7 +200,7 @@ export function LandingPage() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => window.location.hash = "login"}>
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={handleLoginNavigation}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#7ED9B9] to-[#5EC7E8] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <ArrowRight className="w-6 h-6 text-white" />
               </div>
@@ -200,7 +208,7 @@ export function LandingPage() {
               <p className="text-sm text-muted-foreground">Create your account and start managing your pet's nutrition</p>
             </Card>
             
-            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => window.location.hash = "login"}>
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={handleLoginNavigation}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5EC7E8] to-[#2A4B7C] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Brain className="w-6 h-6 text-white" />
               </div>
@@ -208,7 +216,7 @@ export function LandingPage() {
               <p className="text-sm text-muted-foreground">Access your dashboard and pet profiles</p>
             </Card>
             
-            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => window.location.hash = "features"}>
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => handleSmoothScroll('features')}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#2A4B7C] to-[#7ED9B9] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Stethoscope className="w-6 h-6 text-white" />
               </div>
@@ -216,7 +224,7 @@ export function LandingPage() {
               <p className="text-sm text-muted-foreground">Learn about our AI-powered nutrition features</p>
             </Card>
             
-            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => window.location.hash = "contact"}>
+            <Card className="p-6 text-center hover:shadow-lg transition-shadow cursor-pointer group" onClick={() => handleSmoothScroll('contact')}>
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#7ED9B9] to-[#5EC7E8] flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Leaf className="w-6 h-6 text-white" />
               </div>
@@ -317,14 +325,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* API Test Section - Remove this in production */}
-      <section className="py-12 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <ApiTest />
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

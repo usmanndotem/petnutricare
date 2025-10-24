@@ -41,6 +41,7 @@ export class ApiService {
     password: string;
     firstName: string;
     lastName: string;
+    role?: string;
   }) {
     const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: 'POST',

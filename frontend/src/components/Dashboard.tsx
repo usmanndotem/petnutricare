@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
+import { VeterinarySidebar } from "./VeterinarySidebar";
+import { PetOwnerSidebar } from "./PetOwnerSidebar";
 import { Progress } from "./ui/progress";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
@@ -141,74 +143,35 @@ export function Dashboard({ user }: DashboardProps) {
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-border pt-20 z-10">
-        <nav className="p-4 space-y-2">
-          <a
-            href="/dashboard"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-[#7ED9B9]/10 to-[#5EC7E8]/10 text-[#2A4B7C] transition-colors"
-          >
-            <LayoutDashboard className="w-5 h-5" />
-            Veterinary Dashboard
-          </a>
-          <a
-            href="/profiles"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <PawPrint className="w-5 h-5" />
-            Animal Profiles
-          </a>
-          <a
-            href="/create-profile"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Plus className="w-5 h-5" />
-            Add New Patient
-          </a>
-          <a
-            href="/meal-plans"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <UtensilsCrossed className="w-5 h-5" />
-            Meal Plans
-          </a>
-          <a
-            href="/progress"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <TrendingUp className="w-5 h-5" />
-            Progress Tracking
-          </a>
-          <a
-            href="/medical-records"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <FileText className="w-5 h-5" />
-            Medical Records
-          </a>
-          <a
-            href="/ai-analysis"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <Brain className="w-5 h-5" />
-            AI Analysis
-          </a>
-        </nav>
-      </aside>
+      {user?.role === 'VETERINARIAN' ? (
+        <VeterinarySidebar currentPage="dashboard" />
+      ) : (
+        <PetOwnerSidebar currentPage="dashboard" />
+      )}
 
       {/* Main Content */}
       <main className="ml-64 pt-20 p-8">
         <div className="max-w-7xl mx-auto">
           {/* Welcome Section */}
           <div className="mb-8">
-            <h1 className="text-[#2A4B7C] mb-2">Welcome back, Dr. {user?.firstName || 'Smith'} 👋</h1>
-            <p className="text-muted-foreground">Veterinary Dashboard - Monitor your patients' health and nutrition</p>
+            <h1 className="text-[#2A4B7C] mb-2">
+              Welcome back, {user?.role === 'VETERINARIAN' ? `Dr. ${user?.firstName || 'Smith'}` : user?.firstName || 'User'} 👋
+            </h1>
+            <p className="text-muted-foreground">
+              {user?.role === 'VETERINARIAN' 
+                ? 'Veterinary Dashboard - Monitor your patients\' health and nutrition'
+                : 'Pet Owner Dashboard - Manage your pets\' health and nutrition'
+              }
+            </p>
           </div>
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card className="p-6 border-l-4 border-l-[#7ED9B9]">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-muted-foreground m-0">Total Patients</p>
+                <p className="text-sm text-muted-foreground m-0">
+                  {user?.role === 'VETERINARIAN' ? 'Total Patients' : 'My Pets'}
+                </p>
                 <PawPrint className="w-5 h-5 text-[#7ED9B9]" />
               </div>
               <p className="text-2xl text-[#2A4B7C] m-0">{mockAnimals.length}</p>
@@ -221,7 +184,9 @@ export function Dashboard({ user }: DashboardProps) {
                 <UtensilsCrossed className="w-5 h-5 text-[#5EC7E8]" />
               </div>
               <p className="text-2xl text-[#2A4B7C] m-0">18</p>
-              <p className="text-xs text-muted-foreground mt-2 m-0">85% compliance</p>
+              <p className="text-xs text-muted-foreground mt-2 m-0">
+                {user?.role === 'VETERINARIAN' ? '85% compliance' : '85% completion'}
+              </p>
             </Card>
 
             <Card className="p-6 border-l-4 border-l-[#2A4B7C]">
@@ -235,22 +200,37 @@ export function Dashboard({ user }: DashboardProps) {
 
             <Card className="p-6 border-l-4 border-l-orange-500">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm text-muted-foreground m-0">AI Insights</p>
-                <Brain className="w-5 h-5 text-orange-500" />
+                <p className="text-sm text-muted-foreground m-0">
+                  {user?.role === 'VETERINARIAN' ? 'AI Insights' : 'Upcoming Visits'}
+                </p>
+                {user?.role === 'VETERINARIAN' ? (
+                  <Brain className="w-5 h-5 text-orange-500" />
+                ) : (
+                  <Clock className="w-5 h-5 text-orange-500" />
+                )}
               </div>
-              <p className="text-2xl text-[#2A4B7C] m-0">47</p>
-              <p className="text-xs text-muted-foreground mt-2 m-0">Generated today</p>
+              <p className="text-2xl text-[#2A4B7C] m-0">
+                {user?.role === 'VETERINARIAN' ? '47' : '2'}
+              </p>
+              <p className="text-xs text-muted-foreground mt-2 m-0">
+                {user?.role === 'VETERINARIAN' ? 'Generated today' : 'This week'}
+              </p>
             </Card>
           </div>
 
           {/* Main Dashboard Content */}
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className={`grid w-full ${user?.role === 'VETERINARIAN' ? 'grid-cols-4' : 'grid-cols-4'}`}>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="patients">Patient Management</TabsTrigger>
+              <TabsTrigger value="patients">
+                {user?.role === 'VETERINARIAN' ? 'Patient Management' : 'My Pets'}
+              </TabsTrigger>
               <TabsTrigger value="meal-plans">Meal Plans</TabsTrigger>
-              <TabsTrigger value="progress">Progress Tracking</TabsTrigger>
-              <TabsTrigger value="ai-analysis">AI Analysis</TabsTrigger>
+              {user?.role === 'VETERINARIAN' ? (
+                <TabsTrigger value="ai-analysis">AI Analysis</TabsTrigger>
+              ) : (
+                <TabsTrigger value="health-monitoring">Health Monitoring</TabsTrigger>
+              )}
             </TabsList>
 
             {/* Overview Tab */}
@@ -281,7 +261,7 @@ export function Dashboard({ user }: DashboardProps) {
                 </Card>
 
                 {/* Meal Plan Completion by Species */}
-                <Card className="p-6">
+            <Card className="p-6">
                   <h3 className="text-lg font-semibold text-[#2A4B7C] mb-4">Meal Plan Completion by Species</h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -304,9 +284,9 @@ export function Dashboard({ user }: DashboardProps) {
                   <Button variant="outline" size="sm">
                     <Eye className="w-4 h-4 mr-2" />
                     View All
-                  </Button>
-                </div>
-                <div className="space-y-4">
+                </Button>
+              </div>
+              <div className="space-y-4">
                   {medicalRecords.map((record) => (
                     <div key={record.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                       <div className="flex items-start justify-between">
@@ -353,7 +333,7 @@ export function Dashboard({ user }: DashboardProps) {
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                       <Input
-                        placeholder="Search patients by name or owner..."
+                        placeholder={user?.role === 'VETERINARIAN' ? "Search patients by name or owner..." : "Search my pets..."}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="pl-10"
@@ -371,10 +351,12 @@ export function Dashboard({ user }: DashboardProps) {
                       <SelectItem value="cow">Cows</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Patient
-                  </Button>
+                  {user?.role === 'VETERINARIAN' && (
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Patient
+                    </Button>
+                  )}
                 </div>
               </Card>
 
@@ -383,12 +365,12 @@ export function Dashboard({ user }: DashboardProps) {
                 {filteredAnimals.map((animal) => (
                   <Card key={animal.id} className="p-6 hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setSelectedAnimal(animal)}>
                     <div className="flex items-start gap-4">
-                      <img
-                        src={animal.image}
-                        alt={animal.name}
+                    <img
+                      src={animal.image}
+                      alt={animal.name}
                         className="w-16 h-16 rounded-lg object-cover"
-                      />
-                      <div className="flex-1">
+                    />
+                    <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-semibold text-[#2A4B7C]">{animal.name}</h3>
                           <Badge 
@@ -421,10 +403,17 @@ export function Dashboard({ user }: DashboardProps) {
                             <Eye className="w-4 h-4 mr-1" />
                             View
                           </Button>
-                          <Button variant="outline" size="sm" className="flex-1">
-                            <Edit className="w-4 h-4 mr-1" />
-                            Edit
-                          </Button>
+                          {user?.role === 'VETERINARIAN' ? (
+                            <Button variant="outline" size="sm" className="flex-1">
+                              <Edit className="w-4 h-4 mr-1" />
+                              Edit
+                            </Button>
+                          ) : (
+                            <Button variant="outline" size="sm" className="flex-1">
+                              <Activity className="w-4 h-4 mr-1" />
+                              Monitor
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -435,20 +424,57 @@ export function Dashboard({ user }: DashboardProps) {
 
             {/* Meal Plans Tab */}
             <TabsContent value="meal-plans" className="space-y-6">
-              <Card className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-[#2A4B7C]">AI-Generated Meal Plans</h3>
+            <Card className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-[#2A4B7C]">
+                    {user?.role === 'VETERINARIAN' ? 'AI-Generated Meal Plans' : 'My Pet Meal Plans'}
+                  </h3>
                   <div className="flex gap-2">
-                    <Button variant="outline">
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Generate New Plan
-                    </Button>
-                    <Button variant="outline">
-                      <Upload className="w-4 h-4 mr-2" />
-                      Import Records
-                    </Button>
+                    {user?.role === 'VETERINARIAN' ? (
+                      <>
+                        <Button variant="outline">
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Generate New Plan
+                        </Button>
+                        <Button variant="outline">
+                          <Upload className="w-4 h-4 mr-2" />
+                          Import Records
+                        </Button>
+                      </>
+                    ) : (
+                      <Button variant="outline">
+                        <Bell className="w-4 h-4 mr-2" />
+                        View Notifications
+                </Button>
+                    )}
                   </div>
                 </div>
+
+                {/* Notifications for Caregivers */}
+                {user?.role !== 'VETERINARIAN' && (
+                  <div className="mb-6 space-y-3">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Bell className="w-5 h-5 text-yellow-600" />
+                        <span className="font-medium text-yellow-800">Diet Plan Update</span>
+                        <Badge variant="outline" className="ml-auto">New</Badge>
+                      </div>
+                      <p className="text-sm text-yellow-700">
+                        Max's meal plan has been updated by Dr. Smith. Please review the new portion sizes.
+                      </p>
+                    </div>
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AlertTriangle className="w-5 h-5 text-red-600" />
+                        <span className="font-medium text-red-800">Intervention Required</span>
+                        <Badge variant="destructive" className="ml-auto">Urgent</Badge>
+                      </div>
+                      <p className="text-sm text-red-700">
+                        Luna has not been eating her prescribed meals. Please contact Dr. Smith immediately.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Selected Animal Details */}
@@ -505,14 +531,14 @@ export function Dashboard({ user }: DashboardProps) {
                         <div className="flex items-center gap-2 mb-1">
                           <AlertTriangle className="w-4 h-4 text-orange-600" />
                           <span className="text-sm font-medium text-orange-800">Avoid</span>
-                        </div>
+                  </div>
                         <p className="text-sm text-orange-700">
                           High-calorie treats and excessive carbohydrates
                         </p>
-                      </div>
-                    </div>
-                  </Card>
                 </div>
+              </div>
+            </Card>
+          </div>
               </Card>
             </TabsContent>
 
@@ -524,15 +550,15 @@ export function Dashboard({ user }: DashboardProps) {
                   <h3 className="text-lg font-semibold text-[#2A4B7C] mb-4">Weight Progress - {selectedAnimal.name}</h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={weightData}>
+                <LineChart data={weightData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip />
+                  <Tooltip />
                         <Line type="monotone" dataKey="weight" stroke="#7ED9B9" strokeWidth={2} />
                         <Line type="monotone" dataKey="target" stroke="#FF6B6B" strokeWidth={2} strokeDasharray="5 5" />
-                      </LineChart>
-                    </ResponsiveContainer>
+                </LineChart>
+              </ResponsiveContainer>
                   </div>
                   <div className="flex items-center gap-4 mt-4">
                     <div className="flex items-center gap-2">
@@ -544,10 +570,10 @@ export function Dashboard({ user }: DashboardProps) {
                       <span className="text-sm text-muted-foreground">Target Weight</span>
                     </div>
                   </div>
-                </Card>
+            </Card>
 
                 {/* Health Metrics */}
-                <Card className="p-6">
+            <Card className="p-6">
                   <h3 className="text-lg font-semibold text-[#2A4B7C] mb-4">Health Metrics</h3>
                   <div className="space-y-4">
                     <div>
@@ -600,6 +626,143 @@ export function Dashboard({ user }: DashboardProps) {
                     <CheckCircle className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                     <p className="text-2xl font-bold text-purple-600">85%</p>
                     <p className="text-sm text-muted-foreground">Diet Compliance</p>
+                  </div>
+                </div>
+              </Card>
+            </TabsContent>
+
+            {/* Health Monitoring Tab - For Caregivers */}
+            <TabsContent value="health-monitoring" className="space-y-6">
+              <Card className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-[#2A4B7C]">Health Monitoring & Observations</h3>
+                  <Button>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Observation
+                  </Button>
+                </div>
+
+                {/* Health Observation Form */}
+                <Card className="p-4 mb-6">
+                  <h4 className="font-medium text-[#2A4B7C] mb-4">Record Daily Observations</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground mb-2 block">Pet</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select pet" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockAnimals.map((animal) => (
+                            <SelectItem key={animal.id} value={animal.name}>
+                              {animal.name} ({animal.species})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground mb-2 block">Date</label>
+                      <Input type="date" defaultValue={new Date().toISOString().split('T')[0]} />
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground mb-2 block">Appetite</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select appetite level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="excellent">Excellent</SelectItem>
+                          <SelectItem value="good">Good</SelectItem>
+                          <SelectItem value="fair">Fair</SelectItem>
+                          <SelectItem value="poor">Poor</SelectItem>
+                          <SelectItem value="none">No appetite</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground mb-2 block">Energy Level</label>
+                      <Select>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select energy level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="normal">Normal</SelectItem>
+                          <SelectItem value="low">Low</SelectItem>
+                          <SelectItem value="very-low">Very Low</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-muted-foreground mb-2 block">Weight (kg)</label>
+                      <Input type="number" step="0.1" placeholder="Enter current weight" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="text-sm font-medium text-muted-foreground mb-2 block">Additional Notes</label>
+                      <textarea 
+                        className="w-full p-3 border border-gray-300 rounded-md resize-none" 
+                        rows={3}
+                        placeholder="Any other observations about your pet's health..."
+                      />
+                    </div>
+                  </div>
+                  <Button className="mt-4">
+                    <Activity className="w-4 h-4 mr-2" />
+                    Record Observation
+                  </Button>
+                </Card>
+
+                {/* Recent Observations */}
+              <div className="space-y-4">
+                  <h4 className="font-medium text-[#2A4B7C]">Recent Observations</h4>
+                  <div className="space-y-3">
+                    <div className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-medium">Max - Golden Retriever</h5>
+                        <span className="text-sm text-muted-foreground">Today</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Appetite:</span>
+                          <Badge variant="outline" className="ml-2">Good</Badge>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Energy:</span>
+                          <Badge variant="outline" className="ml-2">Normal</Badge>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Weight:</span>
+                          <span className="ml-2 font-medium">30.2 kg</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Ate all meals as prescribed. Active during morning walk.
+                      </p>
+                    </div>
+                    <div className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h5 className="font-medium">Luna - Persian Cat</h5>
+                        <span className="text-sm text-muted-foreground">Yesterday</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Appetite:</span>
+                          <Badge variant="destructive" className="ml-2">Poor</Badge>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Energy:</span>
+                          <Badge variant="outline" className="ml-2">Low</Badge>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Weight:</span>
+                          <span className="ml-2 font-medium">4.3 kg</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Only ate half of morning meal. Seems lethargic.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -682,10 +845,10 @@ export function Dashboard({ user }: DashboardProps) {
                           <Badge variant="secondary">Sweet Potato</Badge>
                           <Badge variant="secondary">Green Beans</Badge>
                         </div>
-                      </div>
-                    </div>
-                  </Card>
                 </div>
+              </div>
+            </Card>
+          </div>
               </Card>
             </TabsContent>
           </Tabs>

@@ -71,7 +71,8 @@ export function LoginPage({ onLogin }: LoginPageProps) {
         email,
         password,
         firstName,
-        lastName
+        lastName,
+        role: userRole === "user" ? "USER" : "VETERINARIAN"
       });
 
       if (response.success) {
