@@ -2,6 +2,7 @@ import React from 'react';
 import { 
   LayoutDashboard, 
   PawPrint, 
+  Users,
   UtensilsCrossed, 
   FileText, 
   Brain 
@@ -24,6 +25,12 @@ export function VeterinarySidebar({ currentPage }: VeterinarySidebarProps) {
       icon: PawPrint,
       label: 'Animal Profiles',
       page: 'profiles'
+    },
+    {
+      href: '/caregivers',
+      icon: Users,
+      label: 'Caregivers',
+      page: 'caregivers'
     },
     {
       href: '/meal-plans',

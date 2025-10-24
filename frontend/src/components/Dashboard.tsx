@@ -24,7 +24,8 @@ import {
   Users,
   Activity,
   Target,
-  Zap
+  Zap,
+  Info
 } from "lucide-react";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
@@ -36,6 +37,8 @@ import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { useEffect } from "react";
+import { NotificationService, NotificationItem } from "../services/notifications";
 
 // Mock data for veterinary dashboard
 const mockAnimals = [
@@ -132,6 +135,22 @@ export function Dashboard({ user }: DashboardProps) {
   const [selectedAnimal, setSelectedAnimal] = useState(mockAnimals[0]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterSpecies, setFilterSpecies] = useState("all");
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+
+  // Load caregiver notifications
+  useEffect(() => {
+    if (user?.role !== 'VETERINARIAN' && user?.email) {
+      const items = NotificationService.getForRecipient(user.email);
+      setNotifications(items);
+    }
+  }, [user?.email, user?.role]);
+
+  const markAllRead = () => {
+    if (user?.email) {
+      NotificationService.markAllRead(user.email);
+      setNotifications(NotificationService.getForRecipient(user.email));
+    }
+  };
 
   const filteredAnimals = mockAnimals.filter(animal => {
     const matchesSearch = animal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -450,29 +469,33 @@ export function Dashboard({ user }: DashboardProps) {
                   </div>
                 </div>
 
-                {/* Notifications for Caregivers */}
+                {/* Notifications for Caregivers (from localStorage) */}
                 {user?.role !== 'VETERINARIAN' && (
                   <div className="mb-6 space-y-3">
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Bell className="w-5 h-5 text-yellow-600" />
-                        <span className="font-medium text-yellow-800">Diet Plan Update</span>
-                        <Badge variant="outline" className="ml-auto">New</Badge>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-[#2A4B7C] font-semibold">Notifications</h4>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">{notifications.filter(n => !n.read).length} new</Badge>
+                        <Button variant="outline" size="sm" onClick={markAllRead}>Mark all read</Button>
                       </div>
-                      <p className="text-sm text-yellow-700">
-                        Max's meal plan has been updated by Dr. Smith. Please review the new portion sizes.
-                      </p>
                     </div>
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <AlertTriangle className="w-5 h-5 text-red-600" />
-                        <span className="font-medium text-red-800">Intervention Required</span>
-                        <Badge variant="destructive" className="ml-auto">Urgent</Badge>
+                    {notifications.length === 0 ? (
+                      <div className="bg-muted/40 border rounded-lg p-4 text-sm text-muted-foreground">
+                        No notifications yet.
                       </div>
-                      <p className="text-sm text-red-700">
-                        Luna has not been eating her prescribed meals. Please contact Dr. Smith immediately.
-                      </p>
-                    </div>
+                    ) : (
+                      notifications.map((n) => (
+                        <div key={n.id} className={`rounded-lg p-4 border ${n.read ? 'bg-white' : 'bg-yellow-50 border-yellow-200'}`}>
+                          <div className="flex items-center gap-2 mb-1">
+                            {n.type === 'reminder' ? <Bell className="w-4 h-4 text-yellow-600" /> : n.type === 'alert' ? <AlertTriangle className="w-4 h-4 text-red-600" /> : <Info className="w-4 h-4 text-blue-600" />}
+                            <span className="font-medium text-[#2A4B7C]">{n.title}</span>
+                            {!n.read && <Badge variant="outline" className="ml-auto">New</Badge>}
+                          </div>
+                          <div className="text-xs text-muted-foreground mb-1">{new Date(n.createdAt).toLocaleString()}</div>
+                          <p className="text-sm text-[#2A4B7C] m-0">{n.message}</p>
+                        </div>
+                      ))
+                    )}
                   </div>
                 )}
 
@@ -526,7 +549,7 @@ export function Dashboard({ user }: DashboardProps) {
                         <p className="text-sm text-blue-700">
                           Reduce weight by 10% over 6 months to improve joint mobility
                         </p>
-                      </div>
+                    </div>
                       <div className="bg-orange-50 border border-orange-200 rounded p-3">
                         <div className="flex items-center gap-2 mb-1">
                           <AlertTriangle className="w-4 h-4 text-orange-600" />

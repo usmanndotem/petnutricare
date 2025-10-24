@@ -10,10 +10,11 @@ import { ViewProfiles } from "./components/ViewProfiles";
 import { MealPlan } from "./components/MealPlan";
 import { MedicalRecords } from "./components/MedicalRecords";
 import { AIAnalysis } from "./components/AIAnalysis";
+import { Caregivers } from "./components/Caregivers";
 import { ApiService } from "./services/api";
 import "./styles/globals.css";
 
-type Page = "home" | "login" | "dashboard" | "create-profile" | "profiles" | "meal-plans" | "medical-records" | "ai-analysis";
+type Page = "home" | "login" | "dashboard" | "create-profile" | "profiles" | "meal-plans" | "medical-records" | "ai-analysis" | "caregivers";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
@@ -29,7 +30,7 @@ export default function App() {
         try {
           const response = await ApiService.getProfile();
           if (response.success) {
-            setUser(response.data);
+            setUser(response.data.user);
             setIsLoggedIn(true);
           }
         } catch (error) {
@@ -97,7 +98,11 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case "login":
-        return <LoginPage onLogin={handleLogin} />;
+        return <LoginPage onLogin={handleLogin} onSignupComplete={(newUser) => {
+          setUser(newUser);
+          setIsLoggedIn(true);
+          window.location.hash = 'dashboard';
+        }} />;
       case "dashboard":
         return <Dashboard user={user} />;
       case "create-profile":
@@ -110,6 +115,8 @@ export default function App() {
         return <MedicalRecords user={user} />;
       case "ai-analysis":
         return <AIAnalysis user={user} />;
+      case "caregivers":
+        return <Caregivers user={user} />;
       default:
         return <LandingPage />;
     }
@@ -126,9 +133,9 @@ export default function App() {
     );
   }
 
-  const showHeaderFooter = !["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis"].includes(currentPage);
-  const showDashboardHeader = ["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis"].includes(currentPage);
-  const showBreadcrumb = ["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis"].includes(currentPage);
+  const showHeaderFooter = !["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis", "caregivers"].includes(currentPage);
+  const showDashboardHeader = ["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis", "caregivers"].includes(currentPage);
+  const showBreadcrumb = ["dashboard", "create-profile", "profiles", "meal-plans", "medical-records", "ai-analysis", "caregivers"].includes(currentPage);
 
   return (
     <div className="min-h-screen flex flex-col">

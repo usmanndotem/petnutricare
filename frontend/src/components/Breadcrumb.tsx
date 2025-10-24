@@ -49,6 +49,12 @@ export function Breadcrumb({ currentPage, user }: BreadcrumbProps) {
           { label: "AI Analysis", href: "/ai-analysis" }
         );
         break;
+      case "caregivers":
+        breadcrumbs.push(
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Caregivers", href: "/caregivers" }
+        );
+        break;
     }
 
     return breadcrumbs;

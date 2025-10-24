@@ -40,7 +40,7 @@ export function LandingPage() {
                   className="bg-gradient-to-r from-[#7ED9B9] to-[#5EC7E8] hover:opacity-90"
                   onClick={handleLoginNavigation}
                 >
-                  Get Started <ArrowRight className="w-5 h-5 ml-2" />
+                    Get Started <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
                 <Button size="lg" variant="outline" onClick={handleLoginNavigation}>
                   Login
@@ -182,7 +182,7 @@ export function LandingPage() {
             className="bg-white text-[#2A4B7C] hover:bg-white/90"
             onClick={handleLoginNavigation}
           >
-            Start Free Trial <ArrowRight className="w-5 h-5 ml-2" />
+              Start Free Trial <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
       </section>

@@ -10,9 +10,10 @@ import { ApiService } from "../services/api";
 
 interface LoginPageProps {
   onLogin?: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  onSignupComplete?: (user: any) => void;
 }
 
-export function LoginPage({ onLogin }: LoginPageProps) {
+export function LoginPage({ onLogin, onSignupComplete }: LoginPageProps) {
   const [userRole, setUserRole] = useState("user");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -77,8 +78,15 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
       if (response.success) {
         setError("");
-        setActiveTab("login");
-        alert("Account created successfully! Please log in.");
+        if (response.data?.token) {
+          localStorage.setItem('authToken', response.data.token);
+        }
+        if (onSignupComplete) {
+          onSignupComplete(response.data?.user);
+        } else {
+          setActiveTab("login");
+          alert("Account created successfully! Please log in.");
+        }
       }
     } catch (error) {
       setError("Registration failed. Please try again.");
